@@ -41,7 +41,7 @@ int psHigh(int pid){
 	int ret = sched_setscheduler(pid, SCHED_OTHER, &param);
 	
 	if (ret < 0) {
-		fprintf(stderr, "sched_setscheduler");
+		fprintf(stderr, "sched_setscheduler error\n");
 		exit(1);
 	}
 
@@ -57,7 +57,7 @@ int psLow(int pid){
 	int ret = sched_setscheduler(pid, SCHED_IDLE, &param);
 	
 	if (ret < 0) {
-		fprintf(stderr, "sched_setscheduler");
+		fprintf(stderr, "sched_setscheduler error\n");
 		exit(1);
 	}
 

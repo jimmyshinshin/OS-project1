@@ -70,9 +70,9 @@ void Schedule(Process ps[], int num_procs, int policy){
 
 		for(int i = 0; i < num_procs; i++){
 			if(ps[i].R == my_time){
-				fprintf(stderr, "Process start, name = %s, pid = %d, time = %d\n", ps[i].name, ps[i].pid, my_time);
 				ps[i].pid = psExec(ps[i]);
 				psLow(ps[i].pid);
+				fprintf(stderr, "Process start, name = %s, pid = %d, time = %d\n", ps[i].name, ps[i].pid, my_time);
 			}	
 		}
 
