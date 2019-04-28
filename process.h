@@ -10,6 +10,7 @@ typedef struct process{
 } Process;
 
 
+int psExec(Process);
 
 int selectProcess(int, int);
 #endif

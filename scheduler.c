@@ -12,6 +12,8 @@ typedef struct
 #include <stdlib.h>
 #include <sched.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "scheduler.h"
 #include "process.h"
 
@@ -47,25 +49,23 @@ void Schedule(Process ps[], int num_procs, int policy){
 	
 	int running = -1;
 	int my_time = 0;
-	set_core(getpid());
+	setCore(getpid());
 	
 	
 	while(1){
-/*
+
 		if(running != -1 && ps[running].E == 0){
-			
-			
-			
-			
+			printf("%s %d\n", ps[running].name, ps[running].pid);
+			//fprintf(stderr,"Process finish, pid = %d\n, time = %d\n", ps[running].pid, my_time);
+			waitpid(ps[running].pid, NULL, 0);
+			running = -1;
 		}
-*/
+
 
 		for(int i = 0; i < num_procs; i++){
 			if(ps[i].R == mytime){
 				ps[i].pid = psExec(ps[i]);
 			}	
-			
-			
 		}
 
 
@@ -74,12 +74,11 @@ void Schedule(Process ps[], int num_procs, int policy){
 		/* Run 1 unit time */
 		volatile unsigned long i; for(i=0;i<1000000UL;i++);
 		
-		/* Ready time - 1 */
-		for(int i = 0; i < num_procs; i++)
-			ps[i].R -= 1;
 
 		/* Executing time - 1 */
 		if(running != -1)
 			ps[running].E -= 1;
+
+		my_time += 1;
 	}
 }
