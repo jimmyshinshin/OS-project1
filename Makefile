@@ -2,8 +2,11 @@ COMPILER = gcc
 
 TARGET = ./main
 
+OBJ_DIR = ./obj
+
 SRCS = $(wildcard *.c)
-OBJS = $(SRCS:.c=.o)
+OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.c=.o))
+
 CFLAG = -Wall
 
 .PHONY: all run clean
@@ -16,7 +19,7 @@ run:
 $(TARGET): $(OBJS)
 	$(COMPILER) $(CFLAG) -o $^
 
-%.o: %.c
+$(OBJ_DIR)/%.o: %.c
 	$(COMPILER) $(CFLAGS) -o $@ -c $<
 
 clean:
