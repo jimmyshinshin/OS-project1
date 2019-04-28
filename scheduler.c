@@ -63,7 +63,7 @@ void Schedule(Process ps[], int num_procs, int policy){
 
 
 		for(int i = 0; i < num_procs; i++){
-			if(ps[i].R == mytime){
+			if(ps[i].R == my_time){
 				ps[i].pid = psExec(ps[i]);
 			}	
 		}
