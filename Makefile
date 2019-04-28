@@ -16,7 +16,7 @@ run:
 	$(TARGET)
 
 $(TARGET): $(OBJS)
-	$(COMPILER) $(CFLAG) -o $^
+	$(COMPILER) $(CFLAG) -o $@ $^
 
 %.o: %.c
 	$(COMPILER) $(CFLAGS) -o $@ -c $<
