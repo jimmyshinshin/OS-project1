@@ -11,5 +11,5 @@ typedef struct process{
 
 
 
-int selectProcess(Process ps[], int policy);
+int selectProcess(int, int);
 #endif

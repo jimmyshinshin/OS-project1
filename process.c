@@ -1,12 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h> 
 #include <unistd.h>
 #include <sys/types.h>
 #include "process.h"
+#include "scheduler.h"
 
 
 int psExec(Process ps){
 	
-	int exeTime = ps[i].E;
+	int exeTime = ps.E;
 	
 	int pid = fork();
 
@@ -27,7 +29,7 @@ int psExec(Process ps){
 }
 
 
-int selectProcess(psQueue *q, int policy, int running){
+int selectProcess(int policy, int running){
 	/* If NO process is executing, return -1 */
 	if(running == -1)
 		return -1;

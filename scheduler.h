@@ -8,10 +8,10 @@
 #define SJF 101
 #define PSJF 9898
 
-int checkPolicy(char *policy_name);
+int checkPolicy(char*);
 
-void setCore(pid_t pid);
+void setCore(pid_t);
 
-void Schedule(Process ps[], int num_procs, int policy);
+void Schedule(Process[], int, int);
 
 #endif
