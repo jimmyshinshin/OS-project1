@@ -2,13 +2,15 @@ COMPILER = gcc
 
 TARGET = ./main
 
+
 SRCS = $(wildcard *.c)
 OBJS = $(SRCS:.c=.o)
+
 CFLAG = -Wall
 
 .PHONY: all run clean
 
-all: clean $(TARGET)
+all: $(TARGET) clean
 
 run:
 	$(TARGET)
@@ -20,5 +22,5 @@ $(TARGET): $(OBJS)
 	$(COMPILER) $(CFLAGS) -o $@ -c $<
 
 clean:
-	@$(RM) $(TARGET) $(OBJS)
+	@$(RM) $(OBJS)
 
