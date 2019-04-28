@@ -51,6 +51,7 @@ void Schedule(Process ps[], int num_procs, int policy){
 	
 	int running = -1;
 	int my_time = 0;
+	int last_switch;
 	setCore(getpid());
 	
 	
@@ -71,8 +72,18 @@ void Schedule(Process ps[], int num_procs, int policy){
 			}	
 		}
 
-		int next = selectProcess(ps, num_procs, policy);
+		int next = selectProcess(ps, num_procs, policy, running, my_time);
 		
+		if(next != -1){
+			if(next != running){
+				psHigh(next);
+				psLow(running);
+				running = next;
+				last_switch = my_time;
+			}	
+			
+			
+		}
 
 		/* Run 1 unit time */
 		volatile unsigned long i; for(i=0;i<1000000UL;i++);

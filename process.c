@@ -2,9 +2,13 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sched.h>
 #include "process.h"
 #include "scheduler.h"
 
+
+#define PRINTK 103
+#define GET_TIME 228
 
 int psExec(Process ps){
 	
@@ -63,26 +67,52 @@ int psLow(int pid){
 	return ret;		
 	
 }
-int selectProcess(Process ps[], int num_procs, int policy){
-	/* If NO process is executing, return -1 */
-	if(running == -1)
-		return -1;
+int selectProcess(Process ps[], int num_procs, int policy, int running, int last_switch){
 	
 	/* Different policies */
 	if(policy == FIFO){
 
-		return running;
+		if(running != -1) return running; // FIFO is non-preemtive
+		
+		int first = -1;
+		for(int i = 1; i < num_procs; i++){
+			if(ps[i].E == 0 || ps[i].pid == -1)	
+				continue;
+			if(first == -1 || ps[i].E < ps[first].E)
+				first = i;	
+		}
 
+		return first;
+		
 	}else if(policy == RR){
 		
-
+		return running;
 	
 	}else if(policy == SJF){
+
+		if(running != -1) return running; // SJF is non-preemtive
 		
-		return running;
+		int min = -1;
+		for(int i = 1; i < num_procs; i++){
+			if(ps[i].E == 0 || ps[i].pid == -1)	
+				continue;
+			if(min == -1 || ps[i].E < ps[min].E)
+				min = i;	
+		}
+
+		return min;
 
 	}else if(policy == PSJF){
 		
+		int min = -1;
+		for(int i = 1; i < num_procs; i++){
+			if(ps[i].E == 0 || ps[i].pid == -1)	
+				continue;
+			if(min == -1 || ps[i].E < ps[min].E)
+				min = i;	
+		}
+
+		return min;
 	}
 	
 	
