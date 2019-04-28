@@ -53,7 +53,7 @@ void Schedule(Process ps[], int num_procs, int policy){
 	int my_time = 0;
 	int last_switch;
 	int remaining = num_procs;
-	setCore(getpid(), 0);
+	setCore(0, 0);
 	psHigh(getpid());
 	
 	
