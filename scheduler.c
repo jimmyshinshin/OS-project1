@@ -52,6 +52,7 @@ void Schedule(Process ps[], int num_procs, int policy){
 	int running = -1;
 	int my_time = 0;
 	int last_switch;
+	int remaining = num_procs;
 	setCore(getpid());
 	
 	
@@ -59,14 +60,17 @@ void Schedule(Process ps[], int num_procs, int policy){
 
 		if(running != -1 && ps[running].E == 0){
 			printf("%s %d\n", ps[running].name, ps[running].pid);
-			//fprintf(stderr,"Process finish, pid = %d\n, time = %d\n", ps[running].pid, my_time);
+			fprintf(stderr,"Process finish, name = %s, pid = %d, time = %d\n", ps[running].name, ps[running].pid, my_time);
 			waitpid(ps[running].pid, NULL, 0);
 			running = -1;
+			remaining -= 1;
+			if(remaining == 0) break;
 		}
 
 
 		for(int i = 0; i < num_procs; i++){
 			if(ps[i].R == my_time){
+				fprintf(stderr, "Process start, name = %s, pid = %d, time = %d\n", ps[i].name, ps[i].pid, my_time);
 				ps[i].pid = psExec(ps[i]);
 				psLow(ps[i].pid);
 			}	
@@ -76,12 +80,12 @@ void Schedule(Process ps[], int num_procs, int policy){
 		
 		if(next != -1){
 			if(next != running){
+				fprintf(stderr, "Context switch\n");
 				psHigh(next);
 				psLow(running);
 				running = next;
 				last_switch = my_time;
 			}	
-			
 			
 		}
 
@@ -95,4 +99,6 @@ void Schedule(Process ps[], int num_procs, int policy){
 
 		my_time += 1;
 	}
+
+	return;
 }
