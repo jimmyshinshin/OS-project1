@@ -82,8 +82,8 @@ void Schedule(Process ps[], int num_procs, int policy){
 		if(next != -1){
 			if(next != running){
 				fprintf(stderr, "Context switch\n");
-				psHigh(next);
-				psLow(running);
+				psHigh(ps[next].pid);
+				psLow(ps[running].pid);
 				running = next;
 				last_switch = my_time;
 			}	
