@@ -3,9 +3,9 @@
 #include <stdlib.h> 
 #include <unistd.h>
 #include <sys/types.h>
-#include <sched.h>
 #include "process.h"
 #include "scheduler.h"
+#include <sched.h>
 
 
 #define PRINTK 103
