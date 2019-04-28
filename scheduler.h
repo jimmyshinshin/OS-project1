@@ -10,7 +10,7 @@
 
 int checkPolicy(char*);
 
-void setCore(pid_t);
+void setCore(pid_t, int);
 
 void Schedule(Process[], int, int);
 

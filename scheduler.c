@@ -33,11 +33,11 @@ int checkPolicy(char *policy_name){
 
 } 
 
-void setCore(pid_t pid){
+void setCore(pid_t pid, int core){
 	
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
-	CPU_SET(0, &mask);
+	CPU_SET(core, &mask);
 
 	if(sched_setaffinity(pid, sizeof(mask), &mask) < 0){
 		fprintf(stderr, "setaffinity error\n");	
@@ -53,7 +53,8 @@ void Schedule(Process ps[], int num_procs, int policy){
 	int my_time = 0;
 	int last_switch;
 	int remaining = num_procs;
-	setCore(getpid());
+	setCore(getpid(), 0);
+	psHigh(getpid());
 	
 	
 	while(1){

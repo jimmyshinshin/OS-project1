@@ -29,8 +29,10 @@ int psExec(Process ps){
 		
 		exit(0);
 	}
-	else
+	else{
+		setCore(pid, 1);
 		return pid;
+	}
 }
 
 int psHigh(int pid){
