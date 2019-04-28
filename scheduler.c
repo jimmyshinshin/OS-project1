@@ -45,6 +45,8 @@ void setCore(pid_t pid){
 	}
 	return;
 }
+
+
 void Schedule(Process ps[], int num_procs, int policy){
 	
 	int running = -1;
@@ -65,10 +67,11 @@ void Schedule(Process ps[], int num_procs, int policy){
 		for(int i = 0; i < num_procs; i++){
 			if(ps[i].R == my_time){
 				ps[i].pid = psExec(ps[i]);
+				psLow(ps[i].pid);
 			}	
 		}
 
-
+		int next = selectProcess(ps, num_procs, policy);
 		
 
 		/* Run 1 unit time */

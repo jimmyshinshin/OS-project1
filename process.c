@@ -28,8 +28,42 @@ int psExec(Process ps){
 		return pid;
 }
 
+int psHigh(int pid){
 
-int selectProcess(int policy, int running){
+	struct sched_param param;
+	
+	/* SCHED_OTHER should set priority to 0 */
+	param.sched_priority = 0;
+
+	int ret = sched_setscheduler(pid, SCHED_OTHER, &param);
+	
+	if (ret < 0) {
+		perror("sched_setscheduler");
+		return -1;
+	}
+
+	return ret;
+
+}
+
+int psLow(int pid){
+
+	struct sched_param param;
+	
+	/* SCHED_IDLE should set priority to 0 */
+	param.sched_priority = 0;
+
+	int ret = sched_setscheduler(pid, SCHED_IDLE, &param);
+	
+	if (ret < 0) {
+		perror("sched_setscheduler");
+		return -1;
+	}
+
+	return ret;		
+	
+}
+int selectProcess(Process ps[], int num_procs, int policy){
 	/* If NO process is executing, return -1 */
 	if(running == -1)
 		return -1;

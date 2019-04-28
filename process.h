@@ -12,5 +12,9 @@ typedef struct process{
 
 int psExec(Process);
 
-int selectProcess(int, int);
+int psLow(int);
+
+int psHigh(int);
+
+int selectProcess(Process[], int, int);
 #endif
