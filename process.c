@@ -6,10 +6,7 @@
 #include "process.h"
 #include "scheduler.h"
 #include <sched.h>
-
-
-#define PRINTK 103
-#define GET_TIME 228
+#include <sys/syscall.h>
 
 int psExec(Process ps){
 	int pid = fork();
@@ -18,13 +15,20 @@ int psExec(Process ps){
 		exit(1);
 	}
 	if (pid == 0){ // Child Process
+		unsigned long startsec, startnsec;
+		syscall(333, &startsec, &startnsec);
 		for(int i = 0; i < ps.exec; i++){
 			volatile unsigned long j; 
 			for(j = 0; j < 1000000UL; j++);	
 			//debug
 			if (i % 100 == 0)
 				fprintf(stderr, "%s: %d/%d\n", ps.name, i, ps.exec);
-		}	
+		}
+		unsigned long finishsec, finishnsec;
+		syscall(333, &finishsec, &finishnsec);
+		char message[512];
+		sprintf(message, "[project1] %d %lu.%09lu %lu.%09lu\n", getpid(), startsec, startnsec, finishsec, finishnsec);
+		syscall(334, message);
 		exit(0);
 	}
 	setCore(pid, 1);
