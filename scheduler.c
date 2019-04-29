@@ -46,37 +46,37 @@ void setCore(pid_t pid, int core) {
 void schedule(Process ps[], int num_procs, int policy){
 	
 	int running = -1;
-	int my_time = 0;
+	int now_time = 0;
 	int last_switch;
 	int remaining = num_procs;
-	setCore(0, 0);
+	setCore(getpid(), PARENT_CPU);
 	set_high_priority(getpid());
 	
 	while(1) {
 		if (running != -1 && ps[running].exec == 0) {
 			printf("%s %d\n", ps[running].name, ps[running].pid);
-			fprintf(stderr,"Process finish, name = %s, pid = %d, time = %d\n", ps[running].name, ps[running].pid, my_time);
+			fprintf(stderr,"Process finish, name = %s, pid = %d, time = %d\n", ps[running].name, ps[running].pid, now_time);
 			waitpid(ps[running].pid, NULL, 0);
 			running = -1;
 			remaining -= 1;
 			if(remaining == 0) break;
 		}
 		for (int i = 0; i < num_procs; i++) {
-			if (ps[i].ready == my_time) {
+			if (ps[i].ready == now_time) {
 				ps[i].pid = psExec(ps[i]);
 				set_low_priority(ps[i].pid);
-				fprintf(stderr, "Process start, name = %s, pid = %d, time = %d\n", ps[i].name, ps[i].pid, my_time);
+				fprintf(stderr, "Process start, name = %s, pid = %d, time = %d\n", ps[i].name, ps[i].pid, now_time);
 			}	
 		}
 
-		int next = next_process(ps, num_procs, policy, running, my_time);
+		int next = next_process(ps, num_procs, policy, running, now_time, last_switch);
 		if (next != -1) {
 			if (next != running) {
 				fprintf(stderr, "Context switch\n");
 				set_high_priority(ps[next].pid);
 				set_low_priority(ps[running].pid);
 				running = next;
-				last_switch = my_time;
+				last_switch = now_time;
 			}	
 		}
 		/* Run 1 unit time */
@@ -86,6 +86,6 @@ void schedule(Process ps[], int num_procs, int policy){
 		/* Executing time - 1 */
 		if (running != -1)
 			ps[running].exec--;
-		my_time += 1;
+		now_time++;
 	}
 }
