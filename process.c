@@ -56,39 +56,48 @@ int set_low_priority(int pid){
 	return ret;		
 }
 
-int next_process(Process ps[], int num_procs, int policy, int running, int last_switch){
+int next_process(Process ps[], int num_procs, int policy, int running, int now_time, int last_switch) {
 	/* Different policies */
+	int next = -1;
 	if (policy == FIFO) {
-		if(running != -1) 
+		if (running != -1) 
 			return running; // FIFO is non-preemtive
-		int first = -1;
-		for(int i = 1; i < num_procs; i++){
+		for (int i = 1; i < num_procs; i++) {
 			if(ps[i].exec == 0 || ps[i].pid == -1)	
 				continue;
-			if(first == -1 || ps[i].exec < ps[first].exec)
-				first = i;	
+			if(next == -1 || ps[i].exec < ps[next].exec)
+				next = i;	
 		}
-		return first;
 	} else if (policy == RR) {
-		return running;
+		if (running == -1) {
+			for (int i = 0; i < num_procs; i++) 
+				if (ps[i].pid != -1 && ps[i].exec > 0) {
+					return i;
+			}
+		} else if ((now_time-last_switch) % 500 == 0) {
+			next = (running+1) % num_procs;
+			while (ps[next].pid == -1 && ps[next].exec == 0) 
+				next = (next+1) % num_procs;
+		} else {
+			next = running;
+		}
 	} else if (policy == SJF) {
-		if(running != -1) return running; // SJF is non-preemtive
-		int min = -1;
-		for(int i = 1; i < num_procs; i++){
-			if(ps[i].exec == 0 || ps[i].pid == -1)	
+		if (running != -1) 
+			return running; // SJF is non-preemtive
+		for (int i = 1; i < num_procs; i++) {
+			if (ps[i].exec == 0 || ps[i].pid == -1)	
 				continue;
-			if(min == -1 || ps[i].exec < ps[min].exec)
-				min = i;	
+			if (next == -1 || ps[i].exec < ps[next].exec)
+				next = i;	
 		}
-		return min;
 	} else if (policy == PSJF) {
-		int min = -1;
-		for(int i = 1; i < num_procs; i++){
-			if(ps[i].exec == 0 || ps[i].pid == -1)	
+		int next = -1;
+		for (int i = 1; i < num_procs; i++) {
+			if (ps[i].exec == 0 || ps[i].pid == -1)	
 				continue;
-			if(min == -1 || ps[i].exec < ps[min].exec)
-				min = i;	
+			if (next == -1 || ps[i].exec < ps[next].exec)
+				next = i;	
 		}
-		return min;
 	}
+	return next;
 }
