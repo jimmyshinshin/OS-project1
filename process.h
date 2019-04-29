@@ -2,6 +2,8 @@
 #define PROCESS_H
 
 #define MAX_PROCS 65536
+#define PARENT_CPU 0
+#define CHILD_CPU 1 
 
 typedef struct process{
 	char name[64];
@@ -16,6 +18,6 @@ int set_low_priority(int);
 
 int set_high_priority(int);
 
-int next_process(Process[], int, int, int, int);
+int next_process(Process[], int, int, int, int, int);
 
 #endif
