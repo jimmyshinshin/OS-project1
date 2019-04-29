@@ -13,7 +13,7 @@ CFLAG = -Wall
 all: $(TARGET) clean
 
 run:
-	$(TARGET)
+	$(TARGET) < ./TestData/FIFO_1.txt
 
 $(TARGET): $(OBJS)
 	$(COMPILER) $(CFLAG) -o $@ $^
