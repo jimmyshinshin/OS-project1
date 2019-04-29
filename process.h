@@ -5,17 +5,17 @@
 
 typedef struct process{
 	char name[64];
-	unsigned int R;
-	unsigned int E;
-	int pid;
+	unsigned int ready;
+	unsigned int exec;
+	pid_t pid;
 } Process;
-
 
 int psExec(Process);
 
-int psLow(int);
+int set_low_priority(int);
 
-int psHigh(int);
+int set_high_priority(int);
 
-int selectProcess(Process[], int, int, int, int);
+int next_process(Process[], int, int, int, int);
+
 #endif

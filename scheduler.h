@@ -3,15 +3,15 @@
 
 #include "process.h"
 
-#define FIFO 298
-#define RR 2555555
-#define SJF 101
-#define PSJF 9898
+#define FIFO 1
+#define RR 2
+#define SJF 3
+#define PSJF 4
 
 int checkPolicy(char*);
 
 void setCore(pid_t, int);
 
-void Schedule(Process[], int, int);
+void schedule(Process[], int, int);
 
 #endif
