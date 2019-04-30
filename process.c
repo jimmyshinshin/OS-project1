@@ -20,9 +20,10 @@ int psExec(Process ps){
 		for(int i = 0; i < ps.exec; i++){
 			volatile unsigned long j; 
 			for(j = 0; j < 1000000UL; j++);	
-			//debug
+#ifdef DUBUG
 			if (i % 100 == 0)
 				fprintf(stderr, "%s: %d/%d\n", ps.name, i, ps.exec);
+#endif
 		}
 		unsigned long finishsec, finishnsec;
 		syscall(333, &finishsec, &finishnsec);
@@ -31,7 +32,7 @@ int psExec(Process ps){
 		syscall(334, message);
 		exit(0);
 	}
-	setCore(pid, 1);
+	setCore(pid, CHILD_CPU);
 	return pid;
 }
 
@@ -41,7 +42,6 @@ int set_high_priority(int pid){
 	int ret = sched_setscheduler(pid, SCHED_OTHER, &param);
 	if (ret < 0) {
 		perror("sched_setscheduler error\n");
-		//fprintf(stderr, "sched_setscheduler error\n");
 		exit(1);
 	}
 	return ret;
@@ -54,7 +54,6 @@ int set_low_priority(int pid){
 	
 	if (ret < 0) {
 		perror("sched_setscheduler error\n");
-		//fprintf(stderr, "sched_setscheduler error\n");
 		exit(1);
 	}
 	return ret;		
@@ -66,10 +65,10 @@ int next_process(Process ps[], int num_procs, int policy, int running, int now_t
 	if (policy == FIFO) {
 		if (running != -1) 
 			return running; // FIFO is non-preemtive
-		for (int i = 1; i < num_procs; i++) {
+		for (int i = 0; i < num_procs; i++) {
 			if(ps[i].exec == 0 || ps[i].pid == -1)	
 				continue;
-			if(next == -1 || ps[i].exec < ps[next].exec)
+			if(next == -1 || ps[i].ready < ps[next].ready)
 				next = i;	
 		}
 	} else if (policy == RR) {
