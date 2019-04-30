@@ -20,10 +20,6 @@ int psExec(Process ps){
 		for(int i = 0; i < ps.exec; i++){
 			volatile unsigned long j; 
 			for(j = 0; j < 1000000UL; j++);	
-#ifdef DUBUG
-			if (i % 100 == 0)
-				fprintf(stderr, "%s: %d/%d\n", ps.name, i, ps.exec);
-#endif
 		}
 		unsigned long finishsec, finishnsec;
 		syscall(333, &finishsec, &finishnsec);
@@ -79,7 +75,7 @@ int next_process(Process ps[], int num_procs, int policy, int running, int now_t
 			}
 		} else if ((now_time-last_switch) % 500 == 0) {
 			next = (running+1) % num_procs;
-			while (ps[next].pid == -1 && ps[next].exec == 0) 
+			while (ps[next].pid == -1 || ps[next].exec == 0) 
 				next = (next+1) % num_procs;
 		} else {
 			next = running;
@@ -87,15 +83,14 @@ int next_process(Process ps[], int num_procs, int policy, int running, int now_t
 	} else if (policy == SJF) {
 		if (running != -1) 
 			return running; // SJF is non-preemtive
-		for (int i = 1; i < num_procs; i++) {
+		for (int i = 0; i < num_procs; i++) {
 			if (ps[i].exec == 0 || ps[i].pid == -1)	
 				continue;
 			if (next == -1 || ps[i].exec < ps[next].exec)
 				next = i;	
 		}
 	} else if (policy == PSJF) {
-		int next = -1;
-		for (int i = 1; i < num_procs; i++) {
+		for (int i = 0; i < num_procs; i++) {
 			if (ps[i].exec == 0 || ps[i].pid == -1)	
 				continue;
 			if (next == -1 || ps[i].exec < ps[next].exec)
