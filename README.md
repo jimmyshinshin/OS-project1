@@ -2,11 +2,11 @@
 user-space scheduler
 
 * Langauge
-c
+	* c
 
 * Compile
-make
+	* make
 
 * Execute
-./main < [input\_file]
+	* ./main < [input\_file]
 
