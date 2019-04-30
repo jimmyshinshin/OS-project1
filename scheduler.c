@@ -37,15 +37,15 @@ void setCore(pid_t pid, int core) {
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
 	CPU_SET(core, &mask);
-	if(sched_getaffinity(pid, sizeof(mask), &mask) < 0) {
-		perror("getaffinity error");	
-		exit(1);
-	}
+	
+
+	/*
 	//TODO: fix sched_setaffinity error
 	if(sched_setaffinity(pid, sizeof(mask), &mask) < 0) {
 		perror("setaffinity error");	
 		exit(1);
 	}
+	*/
 }
 
 int cmp(const void *a, const void *b) {
@@ -66,7 +66,7 @@ void schedule(Process ps[], int num_procs, int policy){
 	while(1) {
 		if (running != -1 && ps[running].exec == 0) {
 			//fprintf(stderr, "running = %d\n", running);
-			//fprintf(stderr, "before waitpid\n");
+			fprintf(stderr, "before waitpid: %d\n", now_time);
 			waitpid(ps[running].pid, NULL, 0);
 			//fprintf(stderr, "after waitpid\n");
 			running = -1;
