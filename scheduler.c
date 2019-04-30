@@ -16,6 +16,7 @@ typedef struct
 #include <sys/wait.h>
 #include "scheduler.h"
 #include "process.h"
+#include <errno.h> 
 
 int checkPolicy(char *policy_name) {
 	if (!strcmp(policy_name, "FIFO")) {
@@ -36,12 +37,17 @@ void setCore(pid_t pid, int core) {
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
 	CPU_SET(core, &mask);
+
+	//TODO: fix sched_setaffinity error
 	if(sched_setaffinity(pid, sizeof(mask), &mask) < 0) {
-		fprintf(stderr, "setaffinity error\n");	
+		perror("setaffinity error");	
 		exit(1);
 	}
 }
 
+int cmp(const void *a, const void *b) {
+	return ((Process*)a)->ready - ((Process*)b)->ready;
+}
 
 void schedule(Process ps[], int num_procs, int policy){
 	
@@ -52,6 +58,9 @@ void schedule(Process ps[], int num_procs, int policy){
 	setCore(getpid(), PARENT_CPU);
 	set_high_priority(getpid());
 	
+	//TODO: sort ps[] ?
+	qsort(ps, num_procs, sizeof(Process), cmp);
+
 	while(1) {
 		if (running != -1 && ps[running].exec == 0) {
 			printf("%s %d\n", ps[running].name, ps[running].pid);
