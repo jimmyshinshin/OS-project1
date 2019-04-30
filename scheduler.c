@@ -37,7 +37,10 @@ void setCore(pid_t pid, int core) {
 	cpu_set_t mask;
 	CPU_ZERO(&mask);
 	CPU_SET(core, &mask);
-
+	if(sched_getaffinity(pid, sizeof(mask), &mask) < 0) {
+		perror("getaffinity error");	
+		exit(1);
+	}
 	//TODO: fix sched_setaffinity error
 	if(sched_setaffinity(pid, sizeof(mask), &mask) < 0) {
 		perror("setaffinity error");	
@@ -58,30 +61,31 @@ void schedule(Process ps[], int num_procs, int policy){
 	setCore(getpid(), PARENT_CPU);
 	set_high_priority(getpid());
 	
-	//TODO: sort ps[] ?
 	qsort(ps, num_procs, sizeof(Process), cmp);
 
 	while(1) {
 		if (running != -1 && ps[running].exec == 0) {
-			printf("%s %d\n", ps[running].name, ps[running].pid);
-			fprintf(stderr,"Process finish, name = %s, pid = %d, time = %d\n", ps[running].name, ps[running].pid, now_time);
+			//fprintf(stderr, "running = %d\n", running);
+			//fprintf(stderr, "before waitpid\n");
 			waitpid(ps[running].pid, NULL, 0);
+			//fprintf(stderr, "after waitpid\n");
 			running = -1;
 			remaining -= 1;
+			//fprintf(stderr, "%d\n", remaining);
 			if(remaining == 0) break;
 		}
 		for (int i = 0; i < num_procs; i++) {
 			if (ps[i].ready == now_time) {
 				ps[i].pid = psExec(ps[i]);
 				set_low_priority(ps[i].pid);
-				fprintf(stderr, "Process start, name = %s, pid = %d, time = %d\n", ps[i].name, ps[i].pid, now_time);
+				fprintf(stderr, "%s %d\n", ps[i].name, ps[i].pid);
 			}	
 		}
 
 		int next = next_process(ps, num_procs, policy, running, now_time, last_switch);
 		if (next != -1) {
 			if (next != running) {
-				fprintf(stderr, "Context switch\n");
+				//fprintf(stderr, "Context switch\n");
 				set_high_priority(ps[next].pid);
 				set_low_priority(ps[running].pid);
 				running = next;
